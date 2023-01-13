@@ -1,0 +1,396 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Product {
+  barcode: ID!
+  quantity: Float!
+}
+
+type Session {
+  strapiId: Float!
+  programId: String!
+  createdAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Program {
+  id: ID!
+  strapiId: Float!
+  sessions: [Session!]!
+  closed: Boolean!
+  createdAt: DateTime!
+}
+
+type Recipe {
+  strapiId: ID!
+  userId: String!
+}
+
+type Metric {
+  baseId: String!
+  value: Float!
+  createdAt: DateTime!
+}
+
+type Evolution {
+  id: ID!
+  profileId: String
+  metrics: [Metric!]!
+  image: String
+}
+
+type MetricBase {
+  id: String!
+  name: String!
+  createdAt: DateTime!
+  unit: String
+}
+
+type UserProfile {
+  userId: String!
+  birthday: DateTime!
+  athleticLevel: AthleticLevel!
+  gender: Gender!
+  evolutions: [Evolution!]!
+  metrics: [MetricBase!]!
+}
+
+enum AthleticLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+"""
+user
+"""
+type User {
+  id: ID!
+  fullname: String!
+  email: String!
+  profile: UserProfile
+  products: [Product!]!
+  followedPrograms: [Program!]!
+  contacts: [User!]!
+  favoriteRecipes: [Recipe!]!
+}
+
+type Auth {
+  accessToken: String!
+}
+
+"""
+user
+"""
+type UserMin {
+  id: ID!
+  fullname: String!
+}
+
+type Message {
+  text: String!
+  sender: UserMin!
+  receiver: UserMin!
+  createdAt: DateTime!
+}
+
+type Query {
+  whoAmI: User!
+  sudoWhoAmI(id: ID!): User!
+  sudoGetAllUsers(data: GetUsersDto!): [User!]!
+  getAllByDate(date: DateTime!): [Product!]!
+  sudoGetAllByDate(userId: ID!, date: DateTime!): Product!
+  getAllContacts: [UserMin!]!
+  getMessages(data: GetMessageInput!): [Message!]!
+}
+
+input GetUsersDto {
+  take: Float
+  skip: Float
+  emailSearch: String
+  fullnameSearch: String
+}
+
+input GetMessageInput {
+  take: Float = 30
+  skip: Float = 0
+  contactId: String!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}
+
+type Mutation {
+  createUser(data: CreateUserDto!): User!
+  updateUser(data: UpdateUserDto!): User!
+  deleteUser: User!
+  sudoUpdateUser(data: UpdateUserDto!): User!
+  sudoDeleteUser(data: DeleteUserDto!): User!
+  generatePasswordReset: Boolean!
+  sudoGeneratePasswordReset(userId: String!): Boolean!
+  resetPassword(data: ResetPasswordDto!): Boolean!
+  resendEmailConfirmation: Boolean!
+  sudoResendEmailConfirmation(userId: String!): Boolean!
+  verifyEmail(token: String!): Boolean!
+  login(data: LoginInput!): Auth
+  createUserProfile(data: CreateUserProfileInput!): UserProfile!
+  updateUserProfile(data: UpdateUserProfileInput!): UserProfile!
+  sudoCreateUserProfile(data: UpdateUserProfileInput!): UserProfile!
+  sudoUpdateUserProfile(data: UpdateUserProfileInput!): UserProfile!
+  createEvolution(data: CreateEvolutionInput!): Evolution!
+  updateEvolution(data: UpdateEvolutionInput!): Evolution!
+  sudoUpdateEvolution(data: UpdateEvolutionInput!): Evolution!
+  deleteEvolution(data: DeleteEvolutionInput!): Evolution!
+  sudoDeleteEvolution(data: DeleteEvolutionInput!): Evolution!
+  createBaseMetric(data: CreateBaseMetricInput!): MetricBase!
+  sudoCreateBaseMetric(data: CreateBaseMetricInput!): MetricBase!
+  updateBaseMetric(data: UpdateBaseMetricInput!): MetricBase!
+  sudoUpdateBaseMetric(data: UpdateBaseMetricInput!): MetricBase!
+  deleteBaseMetric(data: DeleteBaseMetricInput!): MetricBase!
+  sudoDeleteBaseMetric(data: DeleteBaseMetricInput!): MetricBase!
+  createProduct(data: CreateProductInput!): Product!
+  sudoCreateProduct(data: CreateProductInput!): Product!
+  updateProduct(data: UpdateProductInput!): Product!
+  sudoUpdateProduct(data: UpdateProductInput!): Product!
+  removeProduct(data: DeleteProductInput!): Product!
+  sudoRemoveProduct(data: DeleteProductInput!): Product!
+  createProgram(data: CreateProgramInput!): Program!
+  sudoCreateProgram(data: CreateProgramInput!): Program!
+  resetProgram(data: ResetProgramInput!): Program!
+  sudoResetProgram(data: ResetProgramInput!): Program!
+  sudoDeleteProgram(data: DeleteProgramInput!): Program!
+  createSession(data: CreateSessionInput!): Session!
+  sudoCreateSession(data: CreateSessionInput!): Session!
+  deleteSession(data: DeleteSessionInput!): Session!
+  sudoDeleteSession(data: DeleteSessionInput!): Session!
+  favRecipe(data: FavRecipeInput!): Recipe!
+  unfavRecipe(data: UnfavRecipeInput!): Recipe!
+}
+
+input CreateUserDto {
+  fullname: String!
+  email: String!
+  password: String!
+}
+
+input UpdateUserDto {
+  """
+  Only used for admins
+  """
+  id: String
+  fullname: String
+  email: String
+  password: String
+}
+
+input DeleteUserDto {
+  """
+  Only used for admins
+  """
+  id: String
+}
+
+input ResetPasswordDto {
+  """
+  Only used for admins
+  """
+  userId: String
+  newPassword: String!
+  token: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input CreateUserProfileInput {
+  userId: String
+  birthday: DateTime!
+  weight: Float!
+  height: Float!
+  athleticLevel: AthleticLevel!
+  gender: Gender!
+  campaign: Campaign!
+}
+
+enum Campaign {
+  FRANCE
+  AFRICA
+}
+
+input UpdateUserProfileInput {
+  userId: String
+  birthday: DateTime
+  athleticLevel: AthleticLevel
+  gender: Gender
+}
+
+input CreateEvolutionInput {
+  """
+  Only for admins
+  """
+  userId: String
+  metrics: [CreateMetricInput!]!
+}
+
+input CreateMetricInput {
+  """
+  Only used for admins
+  """
+  userId: String
+  baseId: String!
+  value: Float!
+}
+
+input UpdateEvolutionInput {
+  """
+  Only for admins
+  """
+  userId: String
+  metrics: [CreateMetricInput!]
+  id: String!
+}
+
+input DeleteEvolutionInput {
+  id: String!
+
+  """
+  Only for admins
+  """
+  userId: Int
+}
+
+input CreateBaseMetricInput {
+  """
+  Only used for admins
+  """
+  userId: String
+  name: String!
+  unit: String
+}
+
+input UpdateBaseMetricInput {
+  """
+  Only used for admins
+  """
+  userId: String
+  name: String
+  unit: String
+  id: String!
+}
+
+input DeleteBaseMetricInput {
+  id: ID!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}
+
+input CreateProductInput {
+  barcode: ID!
+  quantity: Float!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}
+
+input UpdateProductInput {
+  barcode: ID!
+  quantity: Float!
+
+  """
+  Only used for admins
+  """
+  userId: String
+  id: ID!
+}
+
+input DeleteProductInput {
+  """
+  Only used for admins
+  """
+  userId: String!
+  id: ID!
+}
+
+input CreateProgramInput {
+  strapiId: Float!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}
+
+input ResetProgramInput {
+  id: String!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}
+
+input DeleteProgramInput {
+  id: String!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}
+
+input CreateSessionInput {
+  programId: String!
+  strapiId: Float!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}
+
+input DeleteSessionInput {
+  programId: String!
+  id: String!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}
+
+input FavRecipeInput {
+  strapiId: Int!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}
+
+input UnfavRecipeInput {
+  id: String!
+
+  """
+  Only used for admins
+  """
+  userId: String
+}

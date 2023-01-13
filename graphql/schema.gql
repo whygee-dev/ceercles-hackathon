@@ -1,0 +1,149 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserProfile {
+  userId: String!
+  avatar: String
+  birthday: DateTime!
+  gender: Gender!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+"""user"""
+type User {
+  id: ID!
+  fullname: String!
+  email: String!
+  emailVerified: Boolean!
+  profile: UserProfile
+  contacts: [User!]!
+}
+
+"""user"""
+type AllUsers {
+  users: [User!]!
+  count: Float!
+}
+
+type Auth {
+  accessToken: String!
+}
+
+"""user"""
+type UserMin {
+  id: ID!
+  fullname: String!
+  lastMessage: Message
+}
+
+type Message {
+  id: ID!
+  text: String!
+  sender: UserMin!
+  receiver: UserMin!
+  createdAt: DateTime!
+}
+
+type Query {
+  whoAmI: User!
+  sudoWhoAmI(id: ID!): User!
+  sudoGetAllUsers(data: GetUsersDto!): AllUsers!
+  getAllContacts(data: GetAllContactsInput): [UserMin!]!
+  getMessages(data: GetMessageInput!): [Message!]!
+}
+
+input GetUsersDto {
+  take: Float
+  skip: Float
+  emailSearch: String
+  fullnameSearch: String
+}
+
+input GetAllContactsInput {
+  take: Float = 20
+  skip: Float = 0
+  search: String = ""
+}
+
+input GetMessageInput {
+  take: Float = 20
+  skip: Float = 0
+  contactId: String!
+
+  """Only used for admins"""
+  userId: String
+}
+
+type Mutation {
+  createUser(data: CreateUserDto!): User!
+  updateUser(data: UpdateUserDto!): User!
+  deleteUser: User!
+  sudoUpdateUser(data: UpdateUserDto!): User!
+  sudoDeleteUser(data: DeleteUserDto!): User!
+  generatePasswordReset(email: String!): Boolean!
+  sudoGeneratePasswordReset(email: String!): Boolean!
+  resetPassword(data: ResetPasswordDto!): Boolean!
+  resendEmailConfirmation: Boolean!
+  sudoResendEmailConfirmation(userId: String!): Boolean!
+  verifyEmail(token: String!): Boolean!
+  login(data: LoginInput!): Auth
+  sudoLogin(data: LoginInput!): Auth
+  createUserProfile(data: CreateUserProfileInput!): UserProfile!
+  updateUserProfile(data: UpdateUserProfileInput!): UserProfile!
+  sudoCreateUserProfile(data: UpdateUserProfileInput!): UserProfile!
+  sudoUpdateUserProfile(data: UpdateUserProfileInput!): UserProfile!
+}
+
+input CreateUserDto {
+  fullname: String!
+  email: String!
+  password: String!
+}
+
+input UpdateUserDto {
+  """Only used for admins"""
+  id: String
+  fullname: String
+  email: String
+  password: String
+}
+
+input DeleteUserDto {
+  """Only used for admins"""
+  id: String
+}
+
+input ResetPasswordDto {
+  """Only used for admins"""
+  userId: String
+  newPassword: String!
+  token: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input CreateUserProfileInput {
+  userId: String
+  birthday: DateTime!
+  gender: Gender!
+}
+
+input UpdateUserProfileInput {
+  userId: String
+  birthday: DateTime
+  gender: Gender
+  avatar: String!
+}
